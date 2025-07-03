@@ -23,7 +23,6 @@ public class EventoService {
         this.eventoRepository = eventoRepository;
     }
 
-    // Listar todos os eventos
     public List<EventoDTO> listarTodos() {
         return eventoRepository.findAllByOrderByDataAsc()
                 .stream()
@@ -31,20 +30,20 @@ public class EventoService {
                 .collect(Collectors.toList());
     }
 
-    // Buscar evento por ID
+
     public Optional<EventoDTO> buscarPorId(Long id) {
         return eventoRepository.findById(id)
                 .map(this::convertToDTO);
     }
 
-    // Criar novo evento
+
     public EventoDTO criar(EventoDTO eventoDTO) {
         Evento evento = convertToEntity(eventoDTO);
         Evento eventoSalvo = eventoRepository.save(evento);
         return convertToDTO(eventoSalvo);
     }
 
-    // Atualizar evento
+
     public EventoDTO atualizar(Long id, EventoDTO eventoDTO) {
         return eventoRepository.findById(id)
                 .map(evento -> {
@@ -61,7 +60,7 @@ public class EventoService {
                 .orElseThrow(() -> new RuntimeException("Evento não encontrado com ID: " + id));
     }
 
-    // Deletar evento
+
     public void deletar(Long id) {
         if (!eventoRepository.existsById(id)) {
             throw new RuntimeException("Evento não encontrado com ID: " + id);
@@ -69,7 +68,7 @@ public class EventoService {
         eventoRepository.deleteById(id);
     }
 
-    // Buscar eventos por título e/ou organizador
+
     public List<EventoDTO> buscar(String titulo, String organizador) {
         List<Evento> eventos;
 
@@ -88,7 +87,7 @@ public class EventoService {
                 .collect(Collectors.toList());
     }
 
-    // Buscar eventos por data
+
     public List<EventoDTO> buscarPorData(LocalDate data) {
         return eventoRepository.findByData(data)
                 .stream()
@@ -96,7 +95,7 @@ public class EventoService {
                 .collect(Collectors.toList());
     }
 
-    // Converter Entity para DTO
+
     private EventoDTO convertToDTO(Evento evento) {
         EventoDTO dto = new EventoDTO();
         dto.setId(evento.getId());
@@ -117,7 +116,7 @@ public class EventoService {
         return dto;
     }
 
-    // Converter DTO para Entity
+
     private Evento convertToEntity(EventoDTO dto) {
         Evento evento = new Evento();
         evento.setTitulo(dto.getTitulo());

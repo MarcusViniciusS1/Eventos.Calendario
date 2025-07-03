@@ -35,7 +35,7 @@ public class Usuario {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    // Construtores
+
     public Usuario() {}
 
     public Usuario(String username, String password, String nome) {
@@ -45,7 +45,7 @@ public class Usuario {
         this.ativo = true;
     }
 
-    // Métodos de ciclo de vida
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();

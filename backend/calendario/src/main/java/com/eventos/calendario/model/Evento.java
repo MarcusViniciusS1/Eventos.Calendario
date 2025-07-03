@@ -45,7 +45,7 @@ public class Evento {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    // Construtores
+
     public Evento() {}
 
     public Evento(String titulo, String descricao, LocalDate data, LocalTime hora, String local, String organizador) {
@@ -57,7 +57,7 @@ public class Evento {
         this.organizador = organizador;
     }
 
-    // Métodos de ciclo de vida
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();

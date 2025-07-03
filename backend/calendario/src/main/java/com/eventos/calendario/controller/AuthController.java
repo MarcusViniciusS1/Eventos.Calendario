@@ -36,7 +36,7 @@ public class AuthController {
             System.out.println("👤 Usuário: " + loginRequest.getUsername());
             System.out.println("🔑 Senha fornecida: " + loginRequest.getPassword());
 
-            // Autenticar usando Spring Security com dados do banco
+
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             loginRequest.getUsername(),
@@ -46,11 +46,11 @@ public class AuthController {
 
             System.out.println("✅ Autenticação realizada com sucesso!");
 
-            // Carregar detalhes do usuário do banco
+
             final UserDetails userDetails = userDetailsService
                     .loadUserByUsername(loginRequest.getUsername());
 
-            // Gerar token JWT
+
             final String token = jwtUtil.generateToken(userDetails);
 
             System.out.println("🎫 Token JWT gerado com sucesso");

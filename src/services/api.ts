@@ -10,7 +10,7 @@ const api = axios.create({
   },
 });
 
-// Interceptor para adicionar token JWT
+
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token) {
@@ -19,7 +19,7 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Interceptor para tratar erros de autenticação
+
 api.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -33,10 +33,10 @@ api.interceptors.response.use(
 );
 
 export const eventService = {
-  // Endpoints públicos
+
   getAllEvents: () => api.get<Event[]>('/eventos/publico'),
   
-  // Endpoints protegidos
+
   login: (credentials: LoginRequest) => 
     api.post<LoginResponse>('/auth/login', credentials),
   

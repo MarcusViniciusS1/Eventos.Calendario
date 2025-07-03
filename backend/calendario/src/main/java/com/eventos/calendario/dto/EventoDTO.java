@@ -28,7 +28,6 @@ public class EventoDTO {
     private String createdAt;
     private String updatedAt;
 
-    // Construtores
     public EventoDTO() {}
 
     public EventoDTO(String titulo, String descricao, String data, String hora, String local, String organizador) {

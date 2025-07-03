@@ -21,23 +21,22 @@ public class EventoController {
         this.eventoService = eventoService;
     }
 
-    // Endpoint público - listar todos os eventos
     @GetMapping("/publico")
     public ResponseEntity<List<EventoDTO>> listarEventosPublico() {
         List<EventoDTO> eventos = eventoService.listarTodos();
         return ResponseEntity.ok(eventos);
     }
 
-    // Endpoints protegidos (requerem autenticação)
 
-    // Listar todos os eventos (admin)
+
+
     @GetMapping
     public ResponseEntity<List<EventoDTO>> listarTodos() {
         List<EventoDTO> eventos = eventoService.listarTodos();
         return ResponseEntity.ok(eventos);
     }
 
-    // Buscar evento por ID
+
     @GetMapping("/{id}")
     public ResponseEntity<EventoDTO> buscarPorId(@PathVariable Long id) {
         return eventoService.buscarPorId(id)
@@ -45,7 +44,7 @@ public class EventoController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // Criar novo evento
+
     @PostMapping
     public ResponseEntity<EventoDTO> criar(@Valid @RequestBody EventoDTO eventoDTO) {
         try {
@@ -56,7 +55,7 @@ public class EventoController {
         }
     }
 
-    // Atualizar evento
+
     @PutMapping("/{id}")
     public ResponseEntity<EventoDTO> atualizar(@PathVariable Long id,
                                                @Valid @RequestBody EventoDTO eventoDTO) {
@@ -70,7 +69,7 @@ public class EventoController {
         }
     }
 
-    // Deletar evento
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
         try {
@@ -81,7 +80,7 @@ public class EventoController {
         }
     }
 
-    // Buscar eventos por título e/ou organizador
+
     @GetMapping("/buscar")
     public ResponseEntity<List<EventoDTO>> buscar(
             @RequestParam(required = false) String titulo,
@@ -91,7 +90,6 @@ public class EventoController {
         return ResponseEntity.ok(eventos);
     }
 
-    // Buscar eventos por data
     @GetMapping("/data/{data}")
     public ResponseEntity<List<EventoDTO>> buscarPorData(@PathVariable String data) {
         try {
@@ -103,14 +101,14 @@ public class EventoController {
         }
     }
 
-    // Endpoint para tratamento de erros
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleException(Exception e) {
         return ResponseEntity.badRequest()
                 .body(new ErrorResponse("Erro: " + e.getMessage()));
     }
 
-    // Classe para resposta de erro
+
     public static class ErrorResponse {
         private String message;
 

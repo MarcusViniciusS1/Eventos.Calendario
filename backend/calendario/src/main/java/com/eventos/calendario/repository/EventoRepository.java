@@ -12,28 +12,28 @@ import java.util.List;
 @Repository
 public interface EventoRepository extends JpaRepository<Evento, Long> {
 
-    // Buscar eventos por título (case insensitive)
+
     List<Evento> findByTituloContainingIgnoreCase(String titulo);
 
-    // Buscar eventos por organizador (case insensitive)
+
     List<Evento> findByOrganizadorContainingIgnoreCase(String organizador);
 
-    // Buscar eventos por título E organizador
+
     @Query("SELECT e FROM Evento e WHERE " +
             "(:titulo IS NULL OR LOWER(e.titulo) LIKE LOWER(CONCAT('%', :titulo, '%'))) AND " +
             "(:organizador IS NULL OR LOWER(e.organizador) LIKE LOWER(CONCAT('%', :organizador, '%')))")
     List<Evento> findByTituloAndOrganizador(@Param("titulo") String titulo,
                                             @Param("organizador") String organizador);
 
-    // Buscar eventos por data
+
     List<Evento> findByData(LocalDate data);
 
-    // Buscar eventos a partir de uma data
+
     List<Evento> findByDataGreaterThanEqualOrderByDataAsc(LocalDate data);
 
-    // Buscar eventos entre duas datas
+
     List<Evento> findByDataBetweenOrderByDataAsc(LocalDate dataInicio, LocalDate dataFim);
 
-    // Buscar todos os eventos ordenados por data
+
     List<Evento> findAllByOrderByDataAsc();
 }
