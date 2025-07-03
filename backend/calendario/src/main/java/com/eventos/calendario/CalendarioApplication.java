@@ -19,7 +19,7 @@ public class CalendarioApplication {
             System.out.println("=== INICIALIZANDO SISTEMA DE CALENDÁRIO ===");
             System.out.println();
 
-            // Criar usuários iniciais no banco de dados
+
             try {
                 usuarioService.criarUsuariosIniciais();
 

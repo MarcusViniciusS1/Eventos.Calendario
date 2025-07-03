@@ -23,17 +23,17 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         System.out.println("=== CARREGANDO USUÁRIO ===");
         System.out.println("Usuário solicitado: " + username);
 
-        // Usuários hardcoded com senhas pré-criptografadas
+
         switch (username) {
             case "ADM":
-                // Senha: ADM123 - Hash BCrypt fixo
+
                 String passwordADM = "$2a$10$N.zmdr9k7uOCQb97.AnUu.Zm8GjjHfW8t5pxHuMIUlbcbhfYo6T5e";
                 System.out.println("✅ Usuário ADM encontrado");
                 System.out.println("Senha esperada: ADM123");
                 return new User("ADM", passwordADM, new ArrayList<>());
 
             case "admin":
-                // Senha: admin - Hash BCrypt fixo
+
                 String passwordAdmin = "$2a$10$DowJonesIndex123456789uIjLVqovEWS2.2BhstYewjy.";
                 System.out.println("✅ Usuário admin encontrado");
                 System.out.println("Senha esperada: admin");
@@ -45,7 +45,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         }
     }
 
-    // Método auxiliar para gerar hash de senha (apenas para teste)
+
     public String encodePassword(String rawPassword) {
         String encoded = passwordEncoder.encode(rawPassword);
         System.out.println("Senha '" + rawPassword + "' criptografada: " + encoded);

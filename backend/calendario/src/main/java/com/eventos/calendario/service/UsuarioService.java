@@ -36,13 +36,13 @@ public class UsuarioService {
     }
 
     public void criarUsuariosIniciais() {
-        // Criar usuário ADM se não existir
+
         if (!usuarioRepository.existsByUsername("ADM")) {
             criarUsuario("ADM", "ADM123", "Administrador Principal");
             System.out.println("✅ Usuário ADM criado com sucesso");
         }
 
-        // Criar usuário admin se não existir
+
         if (!usuarioRepository.existsByUsername("admin")) {
             criarUsuario("admin", "admin", "Administrador Secundário");
             System.out.println("✅ Usuário admin criado com sucesso");
