@@ -1,10 +1,6 @@
 package com.eventos.calendario.service;
 
-<<<<<<< HEAD
-import com.eventos.calendario.controller.dto.EventoDTO;
-=======
 import com.eventos.calendario.dto.EventoDTO;
->>>>>>> 20594da14ce2d6cc9b904a468c0b85abe05e53e1
 import com.eventos.calendario.model.Evento;
 import com.eventos.calendario.repository.EventoRepository;
 import org.springframework.stereotype.Service;
@@ -20,49 +16,35 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 public class EventoService {
-<<<<<<< HEAD
     
     private final EventoRepository eventoRepository;
     
-=======
-
-    private final EventoRepository eventoRepository;
-
->>>>>>> 20594da14ce2d6cc9b904a468c0b85abe05e53e1
     public EventoService(EventoRepository eventoRepository) {
         this.eventoRepository = eventoRepository;
     }
-
+    
+    // Listar todos os eventos
     public List<EventoDTO> listarTodos() {
         return eventoRepository.findAllByOrderByDataAsc()
                 .stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
-
-<<<<<<< HEAD
-=======
-
->>>>>>> 20594da14ce2d6cc9b904a468c0b85abe05e53e1
+    
+    // Buscar evento por ID
     public Optional<EventoDTO> buscarPorId(Long id) {
         return eventoRepository.findById(id)
                 .map(this::convertToDTO);
     }
-
-<<<<<<< HEAD
-=======
-
->>>>>>> 20594da14ce2d6cc9b904a468c0b85abe05e53e1
+    
+    // Criar novo evento
     public EventoDTO criar(EventoDTO eventoDTO) {
         Evento evento = convertToEntity(eventoDTO);
         Evento eventoSalvo = eventoRepository.save(evento);
         return convertToDTO(eventoSalvo);
     }
-
-<<<<<<< HEAD
-=======
-
->>>>>>> 20594da14ce2d6cc9b904a468c0b85abe05e53e1
+    
+    // Atualizar evento
     public EventoDTO atualizar(Long id, EventoDTO eventoDTO) {
         return eventoRepository.findById(id)
                 .map(evento -> {
@@ -72,38 +54,25 @@ public class EventoService {
                     evento.setHora(LocalTime.parse(eventoDTO.getHora()));
                     evento.setLocal(eventoDTO.getLocal());
                     evento.setOrganizador(eventoDTO.getOrganizador());
-<<<<<<< HEAD
                     
-=======
-
->>>>>>> 20594da14ce2d6cc9b904a468c0b85abe05e53e1
                     Evento eventoAtualizado = eventoRepository.save(evento);
                     return convertToDTO(eventoAtualizado);
                 })
                 .orElseThrow(() -> new RuntimeException("Evento não encontrado com ID: " + id));
     }
-
-<<<<<<< HEAD
-=======
-
->>>>>>> 20594da14ce2d6cc9b904a468c0b85abe05e53e1
+    
+    // Deletar evento
     public void deletar(Long id) {
         if (!eventoRepository.existsById(id)) {
             throw new RuntimeException("Evento não encontrado com ID: " + id);
         }
         eventoRepository.deleteById(id);
     }
-
-<<<<<<< HEAD
+    
+    // Buscar eventos por título e/ou organizador
     public List<EventoDTO> buscar(String titulo, String organizador) {
         List<Evento> eventos;
         
-=======
-
-    public List<EventoDTO> buscar(String titulo, String organizador) {
-        List<Evento> eventos;
-
->>>>>>> 20594da14ce2d6cc9b904a468c0b85abe05e53e1
         if (titulo != null && organizador != null) {
             eventos = eventoRepository.findByTituloAndOrganizador(titulo, organizador);
         } else if (titulo != null) {
@@ -113,31 +82,21 @@ public class EventoService {
         } else {
             eventos = eventoRepository.findAllByOrderByDataAsc();
         }
-<<<<<<< HEAD
         
-=======
-
->>>>>>> 20594da14ce2d6cc9b904a468c0b85abe05e53e1
         return eventos.stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
-
-<<<<<<< HEAD
-=======
-
->>>>>>> 20594da14ce2d6cc9b904a468c0b85abe05e53e1
+    
+    // Buscar eventos por data
     public List<EventoDTO> buscarPorData(LocalDate data) {
         return eventoRepository.findByData(data)
                 .stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
-
-<<<<<<< HEAD
-=======
-
->>>>>>> 20594da14ce2d6cc9b904a468c0b85abe05e53e1
+    
+    // Converter Entity para DTO
     private EventoDTO convertToDTO(Evento evento) {
         EventoDTO dto = new EventoDTO();
         dto.setId(evento.getId());
@@ -147,29 +106,18 @@ public class EventoService {
         dto.setHora(evento.getHora().toString());
         dto.setLocal(evento.getLocal());
         dto.setOrganizador(evento.getOrganizador());
-<<<<<<< HEAD
         
-=======
-
->>>>>>> 20594da14ce2d6cc9b904a468c0b85abe05e53e1
         if (evento.getCreatedAt() != null) {
             dto.setCreatedAt(evento.getCreatedAt().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         }
         if (evento.getUpdatedAt() != null) {
             dto.setUpdatedAt(evento.getUpdatedAt().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         }
-<<<<<<< HEAD
         
         return dto;
     }
-
-=======
-
-        return dto;
-    }
-
-
->>>>>>> 20594da14ce2d6cc9b904a468c0b85abe05e53e1
+    
+    // Converter DTO para Entity
     private Evento convertToEntity(EventoDTO dto) {
         Evento evento = new Evento();
         evento.setTitulo(dto.getTitulo());

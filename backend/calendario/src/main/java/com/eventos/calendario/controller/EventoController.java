@@ -1,10 +1,6 @@
 package com.eventos.calendario.controller;
 
-<<<<<<< HEAD
-import com.eventos.calendario.controller.dto.EventoDTO;
-=======
 import com.eventos.calendario.dto.EventoDTO;
->>>>>>> 20594da14ce2d6cc9b904a468c0b85abe05e53e1
 import com.eventos.calendario.service.EventoService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -15,46 +11,31 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-<<<<<<< HEAD
-@RequestMapping("/eventos")
-public class EventoController {
-    
-    private EventoService eventoService;
-    
-=======
 @RequestMapping("/api/eventos")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "http://localhost:3000")
 public class EventoController {
 
     private final EventoService eventoService;
 
->>>>>>> 20594da14ce2d6cc9b904a468c0b85abe05e53e1
     public EventoController(EventoService eventoService) {
         this.eventoService = eventoService;
     }
 
+    // Endpoint público - listar todos os eventos
     @GetMapping("/publico")
     public ResponseEntity<List<EventoDTO>> listarEventosPublico() {
         List<EventoDTO> eventos = eventoService.listarTodos();
         return ResponseEntity.ok(eventos);
     }
 
-<<<<<<< HEAD
-=======
-
-
-
->>>>>>> 20594da14ce2d6cc9b904a468c0b85abe05e53e1
+    // Listar todos os eventos (admin) - agora público também
     @GetMapping
     public ResponseEntity<List<EventoDTO>> listarTodos() {
         List<EventoDTO> eventos = eventoService.listarTodos();
         return ResponseEntity.ok(eventos);
     }
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 20594da14ce2d6cc9b904a468c0b85abe05e53e1
+    // Buscar evento por ID
     @GetMapping("/{id}")
     public ResponseEntity<EventoDTO> buscarPorId(@PathVariable Long id) {
         return eventoService.buscarPorId(id)
@@ -62,10 +43,7 @@ public class EventoController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 20594da14ce2d6cc9b904a468c0b85abe05e53e1
+    // Criar novo evento
     @PostMapping
     public ResponseEntity<EventoDTO> criar(@Valid @RequestBody EventoDTO eventoDTO) {
         try {
@@ -76,16 +54,10 @@ public class EventoController {
         }
     }
 
-<<<<<<< HEAD
-    @PutMapping("/{id}")
-    public ResponseEntity<EventoDTO> atualizar(@PathVariable Long id, 
-                                              @Valid @RequestBody EventoDTO eventoDTO) {
-=======
-
+    // Atualizar evento
     @PutMapping("/{id}")
     public ResponseEntity<EventoDTO> atualizar(@PathVariable Long id,
-                                               @Valid @RequestBody EventoDTO eventoDTO) {
->>>>>>> 20594da14ce2d6cc9b904a468c0b85abe05e53e1
+                                              @Valid @RequestBody EventoDTO eventoDTO) {
         try {
             EventoDTO eventoAtualizado = eventoService.atualizar(id, eventoDTO);
             return ResponseEntity.ok(eventoAtualizado);
@@ -96,10 +68,7 @@ public class EventoController {
         }
     }
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 20594da14ce2d6cc9b904a468c0b85abe05e53e1
+    // Deletar evento
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
         try {
@@ -110,23 +79,17 @@ public class EventoController {
         }
     }
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 20594da14ce2d6cc9b904a468c0b85abe05e53e1
+    // Buscar eventos por título e/ou organizador
     @GetMapping("/buscar")
     public ResponseEntity<List<EventoDTO>> buscar(
             @RequestParam(required = false) String titulo,
             @RequestParam(required = false) String organizador) {
-<<<<<<< HEAD
-        
-=======
 
->>>>>>> 20594da14ce2d6cc9b904a468c0b85abe05e53e1
         List<EventoDTO> eventos = eventoService.buscar(titulo, organizador);
         return ResponseEntity.ok(eventos);
     }
 
+    // Buscar eventos por data
     @GetMapping("/data/{data}")
     public ResponseEntity<List<EventoDTO>> buscarPorData(@PathVariable String data) {
         try {
@@ -138,30 +101,14 @@ public class EventoController {
         }
     }
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 20594da14ce2d6cc9b904a468c0b85abe05e53e1
+    // Endpoint para tratamento de erros
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleException(Exception e) {
         return ResponseEntity.badRequest()
                 .body(new ErrorResponse("Erro: " + e.getMessage()));
     }
 
-<<<<<<< HEAD
-    public static class ErrorResponse {
-        private String message;
-        
-        public ErrorResponse(String message) {
-            this.message = message;
-        }
-        
-        public String getMessage() {
-            return message;
-        }
-        
-=======
-
+    // Classe para resposta de erro
     public static class ErrorResponse {
         private String message;
 
@@ -173,7 +120,6 @@ public class EventoController {
             return message;
         }
 
->>>>>>> 20594da14ce2d6cc9b904a468c0b85abe05e53e1
         public void setMessage(String message) {
             this.message = message;
         }
