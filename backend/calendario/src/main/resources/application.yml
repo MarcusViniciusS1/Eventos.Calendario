@@ -5,10 +5,13 @@ spring:
     password: Sen@c2023
     driver-class-name: org.postgresql.Driver
 
+<<<<<<< HEAD
   seguranca:
     segredo: "chave de acesso"
     tempo_validade: 5
 
+=======
+>>>>>>> 20594da14ce2d6cc9b904a468c0b85abe05e53e1
   jpa:
     hibernate:
       ddl-auto: update
@@ -18,6 +21,17 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
 
+<<<<<<< HEAD
+=======
+  security:
+    jwt:
+      secret: mySecretKey
+      expiration: 86400000
+
+  main:
+    allow-circular-references: true
+
+>>>>>>> 20594da14ce2d6cc9b904a468c0b85abe05e53e1
 server:
   port: 8080
   servlet:
@@ -28,7 +42,12 @@ cors:
 
 logging:
   level:
+<<<<<<< HEAD
     com.eventos.calendario: INFO
     org.springframework.security: INFO
     org.springframework.web: INFO
     org.springframework.boot: INFO
+=======
+    com.eventos.calendario: DEBUG
+    org.springframework.security: DEBUG
+>>>>>>> 20594da14ce2d6cc9b904a468c0b85abe05e53e1

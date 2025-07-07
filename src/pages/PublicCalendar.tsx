@@ -3,7 +3,11 @@ import { Calendar, LogIn } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { EventCard } from '../components/EventCard';
 import { Event } from '../types/Event';
+<<<<<<< HEAD
 import { eventService } from '../services/api';
+=======
+import { eventService } from '../services/api'
+>>>>>>> 20594da14ce2d6cc9b904a468c0b85abe05e53e1
 
 export const PublicCalendar: React.FC = () => {
   const [events, setEvents] = useState<Event[]>([]);
@@ -65,7 +69,11 @@ export const PublicCalendar: React.FC = () => {
               Nenhum evento encontrado
             </h2>
             <p className="text-slate-500">
+<<<<<<< HEAD
               Não há eventos cadastrados até o momento.
+=======
+              Não há eventos cadastrados até o momento!
+>>>>>>> 20594da14ce2d6cc9b904a468c0b85abe05e53e1
             </p>
           </div>
         ) : (
