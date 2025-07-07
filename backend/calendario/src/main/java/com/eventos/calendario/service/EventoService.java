@@ -39,8 +39,10 @@ public class EventoService {
     
     // Criar novo evento
     public EventoDTO criar(EventoDTO eventoDTO) {
+        System.out.println("🆕 Criando novo evento: " + eventoDTO.getTitulo());
         Evento evento = convertToEntity(eventoDTO);
         Evento eventoSalvo = eventoRepository.save(evento);
+        System.out.println("✅ Evento criado com ID: " + eventoSalvo.getId());
         return convertToDTO(eventoSalvo);
     }
     

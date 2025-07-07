@@ -10,18 +10,20 @@ function App() {
   return (
     <AuthProvider>
       <Router>
-        <Routes>
-          <Route path="/" element={<PublicCalendar />} />
-          <Route path="/login" element={<Login />} />
-          <Route 
-            path="/admin" 
-            element={
-              <ProtectedRoute>
-                <AdminPanel />
-              </ProtectedRoute>
-            } 
-          />
-        </Routes>
+        <div className="min-h-screen bg-slate-900">
+          <Routes>
+            <Route path="/" element={<PublicCalendar />} />
+            <Route path="/login" element={<Login />} />
+            <Route 
+              path="/admin" 
+              element={
+                <ProtectedRoute>
+                  <AdminPanel />
+                </ProtectedRoute>
+              } 
+            />
+          </Routes>
+        </div>
       </Router>
     </AuthProvider>
   );

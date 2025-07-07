@@ -12,29 +12,31 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/eventos")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = {"http://localhost:3000"})
 public class EventoController {
-
+    
     private final EventoService eventoService;
-
+    
     public EventoController(EventoService eventoService) {
         this.eventoService = eventoService;
     }
-
+    
     // Endpoint público - listar todos os eventos
     @GetMapping("/publico")
     public ResponseEntity<List<EventoDTO>> listarEventosPublico() {
+        System.out.println("📋 Listando eventos públicos...");
         List<EventoDTO> eventos = eventoService.listarTodos();
+        System.out.println("✅ Retornando " + eventos.size() + " eventos");
         return ResponseEntity.ok(eventos);
     }
-
+    
     // Listar todos os eventos (admin) - agora público também
     @GetMapping
     public ResponseEntity<List<EventoDTO>> listarTodos() {
         List<EventoDTO> eventos = eventoService.listarTodos();
         return ResponseEntity.ok(eventos);
     }
-
+    
     // Buscar evento por ID
     @GetMapping("/{id}")
     public ResponseEntity<EventoDTO> buscarPorId(@PathVariable Long id) {
@@ -42,7 +44,7 @@ public class EventoController {
                 .map(evento -> ResponseEntity.ok(evento))
                 .orElse(ResponseEntity.notFound().build());
     }
-
+    
     // Criar novo evento
     @PostMapping
     public ResponseEntity<EventoDTO> criar(@Valid @RequestBody EventoDTO eventoDTO) {
@@ -53,10 +55,10 @@ public class EventoController {
             return ResponseEntity.badRequest().build();
         }
     }
-
+    
     // Atualizar evento
     @PutMapping("/{id}")
-    public ResponseEntity<EventoDTO> atualizar(@PathVariable Long id,
+    public ResponseEntity<EventoDTO> atualizar(@PathVariable Long id, 
                                               @Valid @RequestBody EventoDTO eventoDTO) {
         try {
             EventoDTO eventoAtualizado = eventoService.atualizar(id, eventoDTO);
@@ -67,7 +69,7 @@ public class EventoController {
             return ResponseEntity.badRequest().build();
         }
     }
-
+    
     // Deletar evento
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
@@ -78,17 +80,17 @@ public class EventoController {
             return ResponseEntity.notFound().build();
         }
     }
-
+    
     // Buscar eventos por título e/ou organizador
     @GetMapping("/buscar")
     public ResponseEntity<List<EventoDTO>> buscar(
             @RequestParam(required = false) String titulo,
             @RequestParam(required = false) String organizador) {
-
+        
         List<EventoDTO> eventos = eventoService.buscar(titulo, organizador);
         return ResponseEntity.ok(eventos);
     }
-
+    
     // Buscar eventos por data
     @GetMapping("/data/{data}")
     public ResponseEntity<List<EventoDTO>> buscarPorData(@PathVariable String data) {
@@ -100,26 +102,26 @@ public class EventoController {
             return ResponseEntity.badRequest().build();
         }
     }
-
+    
     // Endpoint para tratamento de erros
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleException(Exception e) {
         return ResponseEntity.badRequest()
                 .body(new ErrorResponse("Erro: " + e.getMessage()));
     }
-
+    
     // Classe para resposta de erro
     public static class ErrorResponse {
         private String message;
-
+        
         public ErrorResponse(String message) {
             this.message = message;
         }
-
+        
         public String getMessage() {
             return message;
         }
-
+        
         public void setMessage(String message) {
             this.message = message;
         }

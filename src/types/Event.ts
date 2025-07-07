@@ -19,4 +19,7 @@ export interface LoginResponse {
   token: string;
   type: string;
   username: string;
+  nome: string;
+  role: string;
+  userId: number;
 }

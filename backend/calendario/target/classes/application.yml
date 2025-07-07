@@ -13,14 +13,33 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
+        jdbc:
+          time_zone: UTC
 
 server:
   port: 8080
   servlet:
     context-path: /
+  error:
+    include-message: always
+    include-binding-errors: always
+
+# JWT Configuration
+api:
+  security:
+    token:
+      secret: ${JWT_SECRET:calendario-eventos-secret-key-super-secure-2024}
 
 cors:
-  allowed-origins: http://localhost:3000
+  allowed-origins: 
+    - http://localhost:3000
+
+# Security Configuration
+security:
+  jwt:
+    expiration: 86400000 # 24 horas em millisegundos
+  password:
+    min-length: 6
 
 logging:
   level:
@@ -28,3 +47,5 @@ logging:
     org.springframework.security: INFO
     org.springframework.web: INFO
     org.springframework.boot: INFO
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE

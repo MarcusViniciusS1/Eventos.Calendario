@@ -1,95 +1,197 @@
 package com.eventos.calendario.controller;
 
+import com.eventos.calendario.dto.AuthDTO;
+import com.eventos.calendario.model.Usuario;
+import com.eventos.calendario.service.TokenService;
+import com.eventos.calendario.service.UsuarioService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = {"http://localhost:3000"})
+@RequiredArgsConstructor
 public class AuthController {
 
+    private final AuthenticationManager authenticationManager;
+    private final TokenService tokenService;
+    private final UsuarioService usuarioService;
+
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
-        // Simular login bem-sucedido para qualquer credencial
-        System.out.println("=== LOGIN SIMULADO ===");
-        System.out.println("👤 Email: " + loginRequest.getUsername());
-        System.out.println("✅ Login autorizado automaticamente");
-        System.out.println("======================");
-        
-        return ResponseEntity.ok(new LoginResponse("fake-token", "Bearer", loginRequest.getUsername()));
+    public ResponseEntity<?> login(@Valid @RequestBody AuthDTO.LoginRequest loginRequest) {
+        try {
+            System.out.println("=== TENTATIVA DE LOGIN ===");
+            System.out.println("👤 Email: " + loginRequest.getUsername());
+            
+            // Verificar se o usuário existe primeiro
+            Usuario usuarioExistente = usuarioService.buscarPorEmail(loginRequest.getUsername())
+                .orElse(null);
+            
+            if (usuarioExistente == null) {
+                System.out.println("❌ Usuário não encontrado: " + loginRequest.getUsername());
+                return ResponseEntity.badRequest()
+                    .body(new ErrorResponse("Usuário não encontrado"));
+            }
+            
+            if (!usuarioExistente.isEnabled()) {
+                System.out.println("❌ Usuário inativo: " + loginRequest.getUsername());
+                return ResponseEntity.badRequest()
+                    .body(new ErrorResponse("Usuário inativo"));
+            }
+            
+            // Autenticar usuário
+            UsernamePasswordAuthenticationToken authToken = 
+                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword());
+            
+            Authentication auth = authenticationManager.authenticate(authToken);
+            Usuario usuario = (Usuario) auth.getPrincipal();
+            
+            // Gerar token JWT
+            String token = tokenService.generateToken(usuario);
+            
+            System.out.println("✅ Login bem-sucedido para: " + usuario.getEmail());
+            System.out.println("🔑 Token gerado com sucesso");
+            System.out.println("👤 Role: " + usuario.getRole().name());
+            System.out.println("========================");
+            
+            AuthDTO.LoginResponse response = new AuthDTO.LoginResponse(
+                token,
+                "Bearer",
+                usuario.getEmail(),
+                usuario.getNome(),
+                usuario.getRole().name(),
+                usuario.getId()
+            );
+            
+            return ResponseEntity.ok(response);
+            
+        } catch (BadCredentialsException e) {
+            System.out.println("❌ Credenciais inválidas para: " + loginRequest.getUsername());
+            System.out.println("========================");
+            return ResponseEntity.badRequest()
+                .body(new ErrorResponse("Email ou senha incorretos"));
+        } catch (AuthenticationException e) {
+            System.out.println("❌ Falha na autenticação: " + e.getMessage());
+            System.out.println("========================");
+            return ResponseEntity.badRequest()
+                .body(new ErrorResponse("Falha na autenticação: " + e.getMessage()));
+        } catch (Exception e) {
+            System.out.println("❌ Erro interno: " + e.getMessage());
+            e.printStackTrace();
+            System.out.println("========================");
+            return ResponseEntity.internalServerError()
+                .body(new ErrorResponse("Erro interno do servidor"));
+        }
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@Valid @RequestBody AuthDTO.RegisterRequest registerRequest) {
+        try {
+            System.out.println("=== REGISTRO DE USUÁRIO ===");
+            System.out.println("👤 Nome: " + registerRequest.getNome());
+            System.out.println("📧 Email: " + registerRequest.getEmail());
+            
+            AuthDTO.RegisterResponse response = usuarioService.criarUsuario(registerRequest);
+            
+            System.out.println("✅ Usuário registrado com sucesso");
+            System.out.println("===========================");
+            
+            return ResponseEntity.ok(response);
+            
+        } catch (RuntimeException e) {
+            System.out.println("❌ Erro no registro: " + e.getMessage());
+            System.out.println("===========================");
+            return ResponseEntity.badRequest()
+                .body(new ErrorResponse(e.getMessage()));
+        } catch (Exception e) {
+            System.out.println("❌ Erro interno: " + e.getMessage());
+            e.printStackTrace();
+            System.out.println("===========================");
+            return ResponseEntity.internalServerError()
+                .body(new ErrorResponse("Erro interno do servidor"));
+        }
     }
 
     @PostMapping("/validate")
     public ResponseEntity<?> validateToken(@RequestHeader("Authorization") String authHeader) {
-        // Sempre retornar token válido
-        return ResponseEntity.ok(new TokenValidationResponse(
-            true, "admin@admin.com", 1L, "Administrador", "Token válido"
-        ));
-    }
-
-    public static class LoginRequest {
-        private String username;
-        private String password;
-
-        public LoginRequest() {}
-
-        public LoginRequest(String username, String password) {
-            this.username = username;
-            this.password = password;
+        try {
+            String token = authHeader.replace("Bearer ", "");
+            String email = tokenService.validateToken(token);
+            
+            if (email.isEmpty()) {
+                return ResponseEntity.badRequest()
+                    .body(new AuthDTO.TokenValidationResponse(false, null, null, null, null, "Token inválido"));
+            }
+            
+            Usuario usuario = usuarioService.buscarPorEmail(email)
+                .orElse(null);
+                
+            if (usuario == null) {
+                return ResponseEntity.badRequest()
+                    .body(new AuthDTO.TokenValidationResponse(false, null, null, null, null, "Usuário não encontrado"));
+            }
+            
+            return ResponseEntity.ok(new AuthDTO.TokenValidationResponse(
+                true, 
+                usuario.getEmail(), 
+                usuario.getId(), 
+                usuario.getNome(),
+                usuario.getRole().name(),
+                "Token válido"
+            ));
+            
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                .body(new AuthDTO.TokenValidationResponse(false, null, null, null, null, "Erro na validação do token"));
         }
-
-        public String getUsername() { return username; }
-        public void setUsername(String username) { this.username = username; }
-        public String getPassword() { return password; }
-        public void setPassword(String password) { this.password = password; }
     }
 
-    public static class LoginResponse {
-        private String token;
-        private String type;
-        private String username;
-
-        public LoginResponse() {}
-
-        public LoginResponse(String token, String type, String username) {
-            this.token = token;
-            this.type = type;
-            this.username = username;
+    @GetMapping("/test-credentials")
+    public ResponseEntity<?> testCredentials() {
+        try {
+            System.out.println("🧪 Endpoint de teste de credenciais chamado");
+            
+            // Verificar se o usuário admin existe
+            Usuario admin = usuarioService.buscarPorEmail("admin@admin.com").orElse(null);
+            
+            if (admin == null) {
+                System.out.println("❌ Usuário admin não encontrado no banco");
+                return ResponseEntity.ok("❌ Usuário admin não encontrado");
+            }
+            
+            System.out.println("✅ Usuário admin encontrado e verificado");
+            return ResponseEntity.ok("✅ Usuário admin encontrado: " + admin.getEmail() + 
+                " | Ativo: " + admin.isEnabled() + 
+                " | Role: " + admin.getRole().name());
+                
+        } catch (Exception e) {
+            System.out.println("❌ Erro no teste de credenciais: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.internalServerError()
+                .body("Erro ao verificar credenciais: " + e.getMessage());
         }
-
-        public String getToken() { return token; }
-        public void setToken(String token) { this.token = token; }
-        public String getType() { return type; }
-        public void setType(String type) { this.type = type; }
-        public String getUsername() { return username; }
-        public void setUsername(String username) { this.username = username; }
     }
 
-    public static class TokenValidationResponse {
-        private boolean valid;
-        private String username;
-        private Long userId;
-        private String nome;
+    public static class ErrorResponse {
         private String message;
-
-        public TokenValidationResponse(boolean valid, String username, Long userId, String nome, String message) {
-            this.valid = valid;
-            this.username = username;
-            this.userId = userId;
-            this.nome = nome;
+        
+        public ErrorResponse(String message) {
             this.message = message;
         }
-
-        // Getters e Setters
-        public boolean isValid() { return valid; }
-        public void setValid(boolean valid) { this.valid = valid; }
-        public String getUsername() { return username; }
-        public void setUsername(String username) { this.username = username; }
-        public Long getUserId() { return userId; }
-        public void setUserId(Long userId) { this.userId = userId; }
-        public String getNome() { return nome; }
-        public void setNome(String nome) { this.nome = nome; }
-        public String getMessage() { return message; }
-        public void setMessage(String message) { this.message = message; }
+        
+        public String getMessage() {
+            return message;
+        }
+        
+        public void setMessage(String message) {
+            this.message = message;
+        }
     }
 }
